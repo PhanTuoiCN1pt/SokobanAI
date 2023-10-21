@@ -10,7 +10,7 @@ import time
 '''
 def BFS_search(board, list_check_point):
     start_time = time.time()
-    ''' BFS SEARCH SOLUTION '''
+    ''' GIẢI PHÁP TÌM KIẾM BFS '''
     ''' IF START BOARD IS GOAL OR DON'T HAVE CHECK POINT '''
     if spf.check_win(board,list_check_point):
         print("Found win")
