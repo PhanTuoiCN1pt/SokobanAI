@@ -11,24 +11,24 @@ import time
 def BFS_search(board, list_check_point):
     start_time = time.time()
     ''' GIẢI PHÁP TÌM KIẾM BFS '''
-    ''' IF START BOARD IS GOAL OR DON'T HAVE CHECK POINT '''
+    ''' KIỂM TRA XEM BẢNG HIỆN TẠI CÓ PHẢI LÀ TRẠNG THÁI CHIẾN THẮNG HOẶC KHÔNG CÓ ĐIỂM KIỂM TRA NÀO HAY KHÔNG '''
     if spf.check_win(board,list_check_point):
         print("Found win")
         return [board]
-    ''' INITIALIZE START STATE '''
+    ''' KHỞI TẠO TRẠNG THÁI BẮT ĐẦU '''
     start_state = spf.state(board, None, list_check_point)
-    ''' INITIALIZE 2 LISTS USED FOR BFS SEARCH '''
+    ''' KHỞI TẠO 2 DANH SÁCH ĐỂ SỬ DỤNG CHO QUÁ TRÌNH TÌM KIẾM BFS '''
     list_state = [start_state]
     list_visit = [start_state]
-    ''' LOOP THROUGH VISITED LIST '''
+    ''' LẶP QUA DANH SÁCH list_visit '''
     while len(list_visit) != 0:
-        ''' GET NOW STATE TO SEARCH '''
+        ''' LẤY RA TRẠNG THÁI HIỆN TẠI ĐỂ TÌM KIẾM '''
         now_state = list_visit.pop(0)
-        ''' GET THE PLAYER'S CURRENT POSITION '''
+        ''' TÌM VỊ TRÍ HIỆN TẠI CỦA NGƯỜI CHƠI '''
         cur_pos = spf.find_position_player(now_state.board)
         ''' 
-        THIS WILL PRINT THE STEP-BY-STEP IMPLEMENTATION OF HOW THE ALGORITHM WORKS, 
-        UNCOMMENT TO USE IF NECCESSARY 
+        CÁI NÀY SẼ IN RA TỪNG BƯỚC MỘT CÁCH HOẠT ĐỘNG CỦA THUẬT TOÁN, 
+        KHÔNG UNCOMMENT ĐỂ SỬ DỤNG NẾU KHÔNG CẦN THIẾT 
         '''
         '''
         time.sleep(1)
@@ -39,40 +39,40 @@ def BFS_search(board, list_check_point):
         print("State in queue : {}".format(len(list_visit)))
         '''
 
-        ''' GET LIST POSITION THAT PLAYER CAN MOVE TO '''
+        ''' LẤY DANH SÁCH CÁC VỊ TRÍ NGƯỜI CHƠI CÓ THỂ DI CHUYỂN '''
         list_can_move = spf.get_next_pos(now_state.board, cur_pos)
-        ''' MAKE NEW STATES FROM LIST CAN MOVE '''
+        ''' TẠO RA TRẠNG THÁI MỚI TỪ DANH SÁCH CÁC VỊ TRÍ CÓ THỂ DI CHUYỂN '''
         for next_pos in list_can_move:
-            ''' MAKE NEW BOARD '''
+            ''' TẠO BOARD MỚI '''
             new_board = spf.move(now_state.board, next_pos, cur_pos, list_check_point)
-            ''' IF THIS BOARD DON'T HAVE IN LIST BEFORE --> SKIP THE STATE '''
+            ''' NẾU BẢNG NÀY KHÔNG CÓ TRONG DANH SÁCH TRƯỚC ĐẤY --> BỎ QUA TRẠNG THÁI '''
             if spf.is_board_exist(new_board, list_state):
                 continue
-            ''' IF ONE OR MORE BOXES ARE STUCK IN THE CORNER --> SKIP THE STATE '''
+            ''' NẾU MỘT HOẶC NHIỀU HỘP BỊ KẸT TRONG GÓC --> BỎ QUA TRẠNG THÁI '''
             if spf.is_board_can_not_win(new_board, list_check_point):
                 continue
-            ''' IF ALL BOXES ARE STUCK --> SKIP THE STATE '''
+            ''' NẾU TẤT CẢ CÁC HỘP BỊ KẸT --> BỎ QUA TRẠNG THÁI '''
             if spf.is_all_boxes_stuck(new_board, list_check_point):
                 continue
 
-            ''' MAKE NEW STATE '''
+            ''' KHỞI TẠO TRẠNG THÁI MỚI '''
             new_state = spf.state(new_board, now_state, list_check_point)
-            ''' CHECK WHETHER THE NEW STATE IS GOAL OR NOT '''
+            ''' KIỂM TRA XEM TRẠNG THÁI MỚI CÓ LÀ ĐIỂM ĐÍCH HAY KHÔNG '''
             if spf.check_win(new_board, list_check_point):
                 print("Found win")
                 return (new_state.get_line(), len(list_state))
             
-            ''' APPEND NEW STATE TO VISITED LIST AND TRAVERSED LIST '''
+            ''' ĐƯA TRẠNG THÁI MỚI VÀO VISITED LIST VÀ TRAVERSED LIST '''
             list_state.append(new_state)
             list_visit.append(new_state)
 
-            ''' COMPUTE THE TIMEOUT '''
+            ''' KIỂM TRA THỜI GIAN THỰC THI VÀ TRẢ VỀ KẾT QUẢ NẾU VƯỢT QUÁ GIỚI HẠN THỜI GIAN '''
             end_time = time.time()
             if end_time - start_time > spf.TIME_OUT:
                 return []
         end_time = time.time()
         if end_time - start_time > spf.TIME_OUT:
             return []
-    ''' SOLUTION NOT FOUND '''
+    ''' KHÔNG TÌM THẤY GIẢI PHÁP '''
     print("Not Found")
     return []
