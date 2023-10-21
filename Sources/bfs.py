@@ -27,7 +27,7 @@ def BFS_search(board, list_check_point):
         ''' TÌM VỊ TRÍ HIỆN TẠI CỦA NGƯỜI CHƠI '''
         cur_pos = spf.find_position_player(now_state.board)
         ''' 
-        CÁI NÀY SẼ IN RA TỪNG BƯỚC MỘT CÁCH HOẠT ĐỘNG CỦA THUẬT TOÁN, 
+        CÁI NÀY SẼ IN RA TỪNG BƯỚC CÁCH HOẠT ĐỘNG CỦA THUẬT TOÁN, 
         KHÔNG UNCOMMENT ĐỂ SỬ DỤNG NẾU KHÔNG CẦN THIẾT 
         '''
         '''
