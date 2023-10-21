@@ -9,7 +9,7 @@ import bfs
 import astar
 import astar1
 import time
-import sys
+import psutil
 ''' Timeout của mỗi map là 30 phút  '''
 TIME_OUT = 1800
 ''' lấy path của folder testcases và checkpoints '''
@@ -196,10 +196,11 @@ def sokoban():
                 currentState = 0
                 steps = len(list_board[0])
                 elapsed_time = end_time - start_time
-                memory_usage = sys.getsizeof(list_board[0])
+                process = psutil.Process(os.getpid())
+                memory_usage = process.memory_info().rss / (1024**2)
                 print(f"Map: Level {mapNumber + 1} ")
                 # In ra thời số bước đi, thời gian giải thuật, bộ nhớ sử dụng 
-                print(f"Bước đi: {steps}, Thời gian: {elapsed_time} seconds, Bộ nhớ: {memory_usage} bytes")
+                print(f"Bước đi: {steps}, Thời gian: {elapsed_time} seconds, Bộ nhớ: {memory_usage} Mb")
             else:
                 sceneState = "end"
                 found = False
