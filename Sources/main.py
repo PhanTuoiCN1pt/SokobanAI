@@ -130,6 +130,7 @@ def renderMap(board):
 			if board[i][j] == '@':
 				screen.blit(player, (j * 32 + indent, i * 32 + 250))
 
+			
 '''
 VARIABLES INITIALIZATIONS
 '''
@@ -167,30 +168,20 @@ def sokoban():
         if sceneState == "init":
             initGame(maps[mapNumber])
            
+
         if sceneState == "executing":
             list_check_point = check_points[mapNumber]
-            # Khởi tạo một biến để đếm các trạng thái đã khám phá
-            explored_states = 1
 
             # Start the time measurement
-            
             start_time = time.time()
-
             if algorithm == "Euclidean Distance Heuristic":
-                print("ED Heuristic")
-                list_board, states_explored = astar1.AStar_Search1(maps[mapNumber], list_check_point)
+                list_board = astar1.AStar_Search1(maps[mapNumber], list_check_point)
             elif algorithm == "Manhattan Distance Heuristic":
-                print("MD Heuristic")
-                list_board,states_explored = astar.AStar_Search(maps[mapNumber], list_check_point)
+                list_board = astar.AStar_Search(maps[mapNumber], list_check_point)
             else:
-                print("BFS")
-                list_board, states_explored = bfs.BFS_search(maps[mapNumber], list_check_point)
-
+                list_board = bfs.BFS_search(maps[mapNumber], list_check_point)
             # Stop the time measurement
-            
             end_time = time.time()
-            # Cập nhật số lượng trạng thái đã khám phá
-            explored_states += states_explored
 
             if len(list_board) > 0:
                 sceneState = "playing"
@@ -199,10 +190,18 @@ def sokoban():
                 elapsed_time = end_time - start_time
                 process = psutil.Process(os.getpid())
                 memory_usage = process.memory_info().rss / (1024**2)
+                if algorithm == "Euclidean Distance Heuristic":
+                    print("ED Heuristic")
+                    
+                elif algorithm == "Manhattan Distance Heuristic":
+                    print("MD Heuristic")
+                    
+                else:
+                    print("BFS")
                 print(f"Map: Level {mapNumber + 1} ")
                 # In ra thời số bước đi, thời gian giải thuật, bộ nhớ sử dụng 
-                print(f"Thời gian: {elapsed_time} seconds, Bộ nhớ: {memory_usage} Mb")
-                print(f"Số trạng thái đã duyệt: {explored_states}")
+                print(f" Thời gian: {elapsed_time} seconds, Bộ nhớ: {memory_usage} Mb")
+                    
             else:
                 sceneState = "end"
                 found = False
@@ -327,8 +326,6 @@ def notfoundGame():
 	text_2 = font_2.render('Nhấn ENTER để tiếp tục', True, WHITE)
 	text_rect_2 = text_2.get_rect(center=(320, 600))
 	screen.blit(text_2, text_rect_2)
-
-	
 
 def main():
 	sokoban()
