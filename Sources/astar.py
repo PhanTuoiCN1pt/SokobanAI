@@ -88,6 +88,9 @@ def AStar_Search(board, list_check_point):
             end_time = time.time()
             if end_time - start_time > spf.TIME_OUT:
                 return []
+        end_time = time.time()
+        if end_time - start_time > spf.TIME_OUT:
+            return []
 
     ''' KHÔNG TÌM THẤY GIẢI PHÁP '''
     # Nếu không tìm thấy giải pháp, in ra thông báo
