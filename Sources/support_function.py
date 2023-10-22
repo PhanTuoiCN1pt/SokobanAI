@@ -30,6 +30,7 @@ class state:
         list_boxes = find_boxes_position(self.board)
         if self.heuristic == 0:
             self.heuristic = self.cost + abs(sum(list_boxes[i][0] + list_boxes[i][1] - self.check_points[i][0] - self.check_points[i][1] for i in range(len(list_boxes))))
+           
         return self.heuristic
     ''' OPERATORS OVERLOADING THAT ALLOW STATES TO BE STORED IN PRIORITY QUEUE '''
     def __gt__(self, other):
