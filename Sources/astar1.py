@@ -18,7 +18,7 @@ def AStar_Search1(board, list_check_point):
     ''' NẾU BẢNG BAN ĐẦU LÀ TRẠNG THÁI ĐÍCH HOẶC KHÔNG CÒN ĐIỂM KIỂM TRA '''
     # Kiểm tra xem trạng thái ban đầu có phải là trạng thái đích hoặc không còn điểm kiểm tra nào
     if spf.check_win(board, list_check_point):
-        print("Tìm thấy đích")
+        print("Found win")
         return [board]  # Trả về danh sách chứa trạng thái ban đầu nếu đã tìm thấy đích
 
     ''' KHỞI TẠO TRẠNG THÁI BAN ĐẦU '''
@@ -73,7 +73,7 @@ def AStar_Search1(board, list_check_point):
             ''' KIỂM TRA XEM TRẠNG THÁI MỚI CÓ PHẢI LÀ TRẠNG THÁI ĐÍCH KHÔNG '''
             # Kiểm tra xem trạng thái mới có phải là trạng thái đích không
             if spf.check_win(new_board, list_check_point):
-                print("Tìm thấy đích")
+                print("Found win")
                 return (new_state.get_line(), len(list_state))
 
             ''' THÊM TRẠNG THÁI MỚI VÀO HÀNG ĐỢI ƯU TIÊN VÀ DANH SÁCH ĐÃ DUYỆT '''
@@ -93,5 +93,5 @@ def AStar_Search1(board, list_check_point):
 
     ''' KHÔNG TÌM THẤY GIẢI PHÁP '''
     # Nếu không tìm thấy giải pháp, in ra thông báo
-    print("Không tìm thấy")
+    print("Not Found")
     return []
