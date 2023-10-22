@@ -1,80 +1,97 @@
-import support_function1 as spf 
-import time
-from queue import PriorityQueue
+import support_function1 as spf  # Import module chứa các hàm hỗ trợ
+import time  # Import module thời gian
+from queue import PriorityQueue  # Import class PriorityQueue từ module queue
 
 '''
 //========================//
-//           BFS          //
+//           ASTAR        //
 //        ALGORITHM       //
 //     IMPLEMENTATION     //
 //========================//
 '''
+
 def AStar_Search1(board, list_check_point):
-    start_time = time.time()
-    ''' A* SEARCH SOLUTION '''
-    ''' IF START BOARD IS GOAL OR DON'T HAVE CHECK POINT '''
-    if spf.check_win(board,list_check_point):
-        print("Found win")
-        return [board]
-    ''' INITIALIZE START state '''
+    start_time = time.time()  # Lấy thời gian bắt đầu thực hiện thuật toán
+
+    ''' TÌM KIẾM A* '''
+    
+    ''' NẾU BẢNG BAN ĐẦU LÀ TRẠNG THÁI ĐÍCH HOẶC KHÔNG CÒN ĐIỂM KIỂM TRA '''
+    # Kiểm tra xem trạng thái ban đầu có phải là trạng thái đích hoặc không còn điểm kiểm tra nào
+    if spf.check_win(board, list_check_point):
+        print("Tìm thấy đích")
+        return [board]  # Trả về danh sách chứa trạng thái ban đầu nếu đã tìm thấy đích
+
+    ''' KHỞI TẠO TRẠNG THÁI BAN ĐẦU '''
+    # Khởi tạo trạng thái ban đầu với bảng trạng thái ban đầu, không có trạng thái cha và danh sách điểm kiểm tra
     start_state = spf.state(board, None, list_check_point)
-    list_state = [start_state]
-    ''' INITIALIZE PRIORITY QUEUE '''
+    list_state = [start_state]  # Danh sách chứa các trạng thái đã duyệt
+
+    ''' KHỞI TẠO HÀNG ĐỢI ƯU TIÊN '''
+    # Khởi tạo hàng đợi ưu tiên và đặt trạng thái ban đầu vào hàng đợi
     heuristic_queue = PriorityQueue()
     heuristic_queue.put(start_state)
-    ''' LOOP THROUGH PRIORITY QUEUE '''
+
+    ''' LẶP QUA HÀNG ĐỢI ƯU TIÊN '''
     while not heuristic_queue.empty():
-        '''GET NOW state TO SEARCH'''
+        '''LẤY TRẠNG THÁI HIỆN TẠI ĐỂ TÌM KIẾM'''
+        # Lấy trạng thái hiện tại cần tìm kiếm từ hàng đợi ưu tiên
         now_state = heuristic_queue.get()
-        ''' GET THE PLAYER'S CURRENT POSITION'''
+
+        ''' LẤY VỊ TRÍ HIỆN TẠI CỦA NGƯỜI CHƠI '''
+        # Lấy vị trí hiện tại của người chơi trên bảng trạng thái
         cur_pos = spf.find_position_player(now_state.board)
-        ''' 
-        THIS WILL PRINT THE STEP-BY-STEP IMPLEMENTATION OF HOW THE ALGORITHM WORKS, 
-        UNCOMMENT TO USE IF NECCESSARY 
-        '''
-        '''
-        time.sleep(1)
-        clear = lambda: os.system('cls')
-        clear()
-        print_matrix(now_state.board)
-        print("state visited : {}".format(len(list_state)))
-        print("state in queue : {}".format(len(list_visit)))
-        '''
-        
+
         ''' GET LIST POSITION THAT PLAYER CAN MOVE TO '''
+        # Lấy danh sách vị trí mà người chơi có thể di chuyển đến
         list_can_move = spf.get_next_pos(now_state.board, cur_pos)
-        ''' MAKE NEW stateS FROM LIST CAN MOVE '''
+
+        ''' TẠO CÁC TRẠNG THÁI MỚI TỪ DANH SÁCH CÁC VỊ TRÍ CÓ THỂ DI CHUYỂN ĐẾN '''
         for next_pos in list_can_move:
-            ''' MAKE NEW BOARD '''
+            ''' TẠO BẢNG MỚI '''
+            # Tạo bảng trạng thái mới sau khi di chuyển
             new_board = spf.move(now_state.board, next_pos, cur_pos, list_check_point)
-            ''' IF THIS BOARD DON'T HAVE IN LIST BEFORE --> SKIP THE state '''
+
+            ''' NẾU BẢNG NÀY CHƯA TỒN TẠI TRONG DANH SÁCH TRẠNG THÁI TRƯỚC ĐÓ --> BỎ QUA TRẠNG THÁI NÀY '''
+            # Nếu bảng trạng thái mới này đã tồn tại trong danh sách trạng thái đã duyệt, bỏ qua trạng thái này
             if spf.is_board_exist(new_board, list_state):
                 continue
-            ''' IF ONE OR MORE BOXES ARE STUCK IN THE CORNER --> SKIP THE state '''
+
+            ''' NẾU MỘT HOẶC NHIỀU HỘP BỊ KẸT Ở GÓC --> BỎ QUA TRẠNG THÁI NÀY '''
+            # Nếu một hoặc nhiều hộp bị kẹt ở góc, bỏ qua trạng thái này
             if spf.is_board_can_not_win(new_board, list_check_point):
                 continue
-            ''' IF ALL BOXES ARE STUCK --> SKIP THE state '''
+
+            ''' NẾU TẤT CẢ HỘP ĐỀU BỊ KẸT --> BỎ QUA TRẠNG THÁI NÀY '''
+            # Nếu tất cả hộp đều bị kẹt, bỏ qua trạng thái này
             if spf.is_all_boxes_stuck(new_board, list_check_point):
                 continue
 
-            ''' MAKE NEW state '''
+            ''' TẠO TRẠNG THÁI MỚI '''
+            # Tạo trạng thái mới dựa trên bảng trạng thái mới, trạng thái hiện tại và danh sách điểm kiểm tra
             new_state = spf.state(new_board, now_state, list_check_point)
-            ''' CHECK WHETHER THE NEW state IS GOAL OR NOT '''
+
+            ''' KIỂM TRA XEM TRẠNG THÁI MỚI CÓ PHẢI LÀ TRẠNG THÁI ĐÍCH KHÔNG '''
+            # Kiểm tra xem trạng thái mới có phải là trạng thái đích không
             if spf.check_win(new_board, list_check_point):
-                print("Found win")
+                print("Tìm thấy đích")
                 return (new_state.get_line(), len(list_state))
-            
-            ''' APPEND NEW state TO PRIORITY QUEUE AND TRAVERSED LIST '''
+
+            ''' THÊM TRẠNG THÁI MỚI VÀO HÀNG ĐỢI ƯU TIÊN VÀ DANH SÁCH ĐÃ DUYỆT '''
+            # Thêm trạng thái mới vào hàng đợi ưu tiên và danh sách trạng thái đã duyệt
             list_state.append(new_state)
             heuristic_queue.put(new_state)
 
-            ''' COMPUTE THE TIMEOUT '''
+            ''' TÍNH THỜI GIAN CHỜ HẾT GIỜ '''
+            # Tính thời gian trôi qua và kiểm tra xem nó có vượt quá ngưỡng timeout không
             end_time = time.time()
             if end_time - start_time > spf.TIME_OUT:
                 return []
+
         end_time = time.time()
         if end_time - start_time > spf.TIME_OUT:
             return []
-    ''' SOLUTION NOT FOUND '''
-    print("Not Found")
+
+    ''' KHÔNG TÌM THẤY GIẢI PHÁP '''
+    # Nếu không tìm thấy giải pháp, in ra thông báo
+    print("Không tìm thấy")
     return []
