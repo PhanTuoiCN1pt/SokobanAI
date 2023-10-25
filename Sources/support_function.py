@@ -4,35 +4,34 @@ import math
 TIME_OUT = 1800
 '''
 //========================//
-//        SUPPORTING      //
-//        FUNCTIONS       //
+//      CÁC HÀM HỖ TRỢ     //
 //========================//
 '''
 '''
-DATA CONTAINER TO STORE THE STATE FOR EACH STEP
+DỮ LIỆU ĐỂ LƯU TRẠNG THÁI CHO MỖI BƯỚC
 '''
 class state:
     def __init__(self, board, state_parent, list_check_point):
-        '''storage current board and state parent of this state'''
+        '''lưu trạng thái hiện tại và trạng thái cha của trạng thái này'''
         self.board = board
         self.state_parent = state_parent
         self.cost = 1
         self.heuristic = 0
         self.check_points = deepcopy(list_check_point)
-    ''' RECURSIVE FUNCTION TO BACKTRACK TO THE FIRST FIRST IF THE CURRENT STATE IS GOAL '''
+    '''HÀM ĐỆ QUY ĐỂ TRUY VẾT ĐẾN TRẠNG THÁI ĐẦU TIÊN NẾU TRẠNG THÁI HIỆN TẠI LÀ MỤC TIÊU'''
     def get_line(self):
-        '''use loop to find list board from start to this state'''
+        '''sử dụng vòng lặp để tìm danh sách trạng thái từ đầu đến trạng thái hiện tại'''
         if self.state_parent is None:
             return [self.board]
         return (self.state_parent).get_line() + [self.board]
-    ''' COMPUTE HEURISTIC FUNCTION USED FOR A* ALGORITHM '''
+    '''TÍNH HÀM HEURISTIC ĐƯỢC SỬ DỤNG CHO GIẢI THUẬT A*'''
     def compute_heuristic(self):
         list_boxes = find_boxes_position(self.board)
         if self.heuristic == 0:
             self.heuristic = self.cost + abs(sum(list_boxes[i][0] + list_boxes[i][1] - self.check_points[i][0] - self.check_points[i][1] for i in range(len(list_boxes))))
            
         return self.heuristic
-    ''' OPERATORS OVERLOADING THAT ALLOW STATES TO BE STORED IN PRIORITY QUEUE '''
+    '''NẠP TOÁN TỬ CHO PHÉP LƯU TRẠNG THÁI TRONG HÀNG ĐỢI ƯU TIÊN'''
     def __gt__(self, other):
         if self.compute_heuristic() > other.compute_heuristic():
             return True
@@ -45,86 +44,86 @@ class state:
             return False
 
 
-''' CHECK WHETHER THE BOARD IS GOAL OR NOT '''
+'''KIỂM TRA XEM BẢNG CÓ PHẢI LÀ MỤC TIÊU HAY KHÔNG'''
 def check_win(board, list_check_point):
-    '''return true if all check points are coverred by boxes'''
+    '''trả về True nếu tất cả các điểm kiểm tra được che phủ bởi các hộp'''
     for p in list_check_point:
         if board[p[0]][p[1]] != '$':
             return False
     return True
 
-''' ASSIGN THE MATRIX '''
+'''GÁN MA TRẬN'''
 def assign_matrix(board):
-    '''return board as same as input board'''
+    '''trả về bảng giống như bảng đầu vào'''
     return [[board[x][y] for y in range(len(board[0]))] for x in range(len(board))]
 
-''' FIND THE PLAYER'S CURRENT POSITION IN A BOARD '''
+'''TÌM VỊ TRÍ HIỆN TẠI CỦA NGƯỜI CHƠI TRONG BẢNG'''
 def find_position_player(board):
-    '''return position of player in board'''
+    '''trả về vị trí của người chơi trong bảng'''
     for x in range(len(board)):
         for y in range(len(board[0])):
             if board[x][y] == '@':
-                return (x,y)
-    return (-1,-1)  # error board
+                return (x, y)
+    return (-1, -1)  # bảng lỗi
 
-''' COMPARE 2 BOARDS '''
+'''SO SÁNH 2 BẢNG'''
 def compare_matrix(board_A, board_B):
-    '''return true if board A is as same as board B'''
+    '''trả về True nếu bảng A giống bằng bảng B'''
     if len(board_A) != len(board_B) or len(board_A[0]) != len(board_B[0]):
         return False
     for i in range(len(board_A)):
-        for j in range(len(board_A[0])):
+        for j in range(len(board_A[0]):
             if board_A[i][j] != board_B[i][j]:
                 return False
     return True
 
-''' CHECK WHETHER THE BOARD ALREADY EXISTED IN THE TRAVERSED LIST'''
+'''KIỂM TRA XEM BẢNG ĐÃ TỒN TẠI TRONG DANH SÁCH ĐÃ ĐI QUA CHƯA'''
 def is_board_exist(board, list_state):
-    '''return true if has same board in list'''
+    '''trả về True nếu có bảng giống trong danh sách'''
     for state in list_state:
         if compare_matrix(state.board, board):
             return True
     return False
 
-''' CHECK WHETHER A SINGLE BOX IS ON A CHECKPOINT '''
+'''KIỂM TRA XEM CÓ ÍT NHẤT MỘT HỘP NẰM TRÊN ĐIỂM KIỂM TRA KHÔNG'''
 def is_box_on_check_point(box, list_check_point):
     for check_point in list_check_point:
         if box[0] == check_point[0] and box[1] == check_point[1]:
             return True
     return False
 
-''' CHECK WHETHER A SIGNLE BOX IS STUCK IN THE CORNER '''
+'''KIỂM TRA XEM ÍT NHẤT MỘT HỘP CÓ BỊ KẸT CẠN Ở GÓC KHÔNG'''
 def check_in_corner(board, x, y, list_check_point):
-    '''return true if board[x][y] in corner'''
+    '''trả về True nếu board[x][y] ở góc'''
     if board[x-1][y-1] == '#':
         if board[x-1][y] == '#' and board[x][y-1] == '#':
-            if not is_box_on_check_point((x,y), list_check_point):
+            if not is_box_on_check_point((x, y), list_check_point):
                 return True
     if board[x+1][y-1] == '#':
         if board[x+1][y] == '#' and board[x][y-1] == '#':
-            if not is_box_on_check_point((x,y), list_check_point):
+            if not is_box_on_check_point((x, y), list_check_point):
                 return True
     if board[x-1][y+1] == '#':
         if board[x-1][y] == '#' and board[x][y+1] == '#':
-            if not is_box_on_check_point((x,y), list_check_point):
+            if not is_box_on_check_point((x, y), list_check_point):
                 return True
     if board[x+1][y+1] == '#':
         if board[x+1][y] == '#' and board[x][y+1] == '#':
-            if not is_box_on_check_point((x,y), list_check_point):
+            if not is_box_on_check_point((x, y), list_check_point):
                 return True
     return False
 
-''' FIND ALL BOXES' POSITIONS '''
+'''TÌM TẤT CẢ VỊ TRÍ HỘP TRÊN BẢNG'''
 def find_boxes_position(board):
     result = []
     for i in range(len(board)):
         for j in range(len(board[0])):
             if board[i][j] == '$':
-                result.append((i,j))
+                result.append((i, j))
     return result
 
 
-''' CHECK WHETHER A SINGLE BOX CAN BE MOVED IN AT LEAST 1 DIRECITON'''
+'''KIỂM TRA XEM ÍT NHẤT MỘT HỘP CÓ THỂ DI CHUYỂN ÍT NHẤT 1 HƯỚNG'''
 def is_box_can_be_moved(board, box_position):
     left_move = (box_position[0], box_position[1] - 1) 
     right_move = (box_position[0], box_position[1] + 1)
@@ -140,7 +139,7 @@ def is_box_can_be_moved(board, box_position):
         return True
     return False
 
-''' CHECK WHEHTER ALL BOXES ARE STUCK '''
+'''KIỂM TRA XEM TẤT CẢ CÁC HỘP CÓ BỊ KẸT CẠN KHÔNG'''
 def is_all_boxes_stuck(board, list_check_point):
     box_positions = find_boxes_position(board)
     result = True
@@ -151,9 +150,9 @@ def is_all_boxes_stuck(board, list_check_point):
             result = False
     return result
 
-''' CHECK WHETHER AT LEAST ONE BOX IS STUCK IN THE CORNER'''
+'''KIỂM TRA XEM ÍT NHẤT MỘT HỘP CÓ THỂ ĐẾN ĐƯỢC VỊ TRÍ THÀNH CÔNG ÍT NHẤT 1 HƯỚNG'''
 def is_board_can_not_win(board, list_check_point):
-    '''return true if box in corner of wall -> can't win'''
+    '''trả về True nếu hộp nằm ở góc của bức tường -> không thể thắng'''
     for x in range(len(board)):
         for y in range(len(board[0])):
             if board[x][y] == '$':
@@ -161,12 +160,12 @@ def is_board_can_not_win(board, list_check_point):
                     return True
     return False
 
-''' GET THE NEXT POSSIBLE MOVE '''
+'''LẤY BƯỚC TIẾP THEO CÓ THỂ DI CHUYỂN'''
 def get_next_pos(board, cur_pos):
-    '''return list of positions that player can move to from current position'''
-    x,y = cur_pos[0], cur_pos[1]
+    '''trả về danh sách vị trí mà người chơi có thể di chuyển đến từ vị trí hiện tại'''
+    x, y = cur_pos[0], cur_pos[1]
     list_can_move = []
-    # MOVE UP (x - 1, y)
+    # DI CHUYỂN LÊN (x - 1, y)
     if 0 <= x - 1 < len(board):
         value = board[x - 1][y]
         if value == ' ' or value == '%':
@@ -175,7 +174,7 @@ def get_next_pos(board, cur_pos):
             next_pos_box = board[x - 2][y]
             if next_pos_box != '#' and next_pos_box != '$':
                 list_can_move.append((x - 1, y))
-    # MOVE DOWN (x + 1, y)
+    # DI CHUYỂN XUỐNG (x + 1, y)
     if 0 <= x + 1 < len(board):
         value = board[x + 1][y]
         if value == ' ' or value == '%':
@@ -184,7 +183,7 @@ def get_next_pos(board, cur_pos):
             next_pos_box = board[x + 2][y]
             if next_pos_box != '#' and next_pos_box != '$':
                 list_can_move.append((x + 1, y))
-    # MOVE LEFT (x, y - 1)
+    # DI CHUYỂN TRÁI (x, y - 1)
     if 0 <= y - 1 < len(board[0]):
         value = board[x][y - 1]
         if value == ' ' or value == '%':
@@ -193,7 +192,7 @@ def get_next_pos(board, cur_pos):
             next_pos_box = board[x][y - 2]
             if next_pos_box != '#' and next_pos_box != '$':
                 list_can_move.append((x, y - 1))
-    # MOVE RIGHT (x, y + 1)
+    # DI CHUYỂN PHẢI (x, y + 1)
     if 0 <= y + 1 < len(board[0]):
         value = board[x][y + 1]
         if value == ' ' or value == '%':
@@ -204,41 +203,41 @@ def get_next_pos(board, cur_pos):
                 list_can_move.append((x, y + 1))
     return list_can_move
 
-''' MOVE THE BOARD IN CERTAIN DIRECTIONS '''
+'''DI CHUYỂN BẢNG THEO CÁC HƯỚNG NHẤT ĐỊNH'''
 def move(board, next_pos, cur_pos, list_check_point):
-    '''return a new board after move'''
-    # MAKE NEW BOARD AS SAME AS CURRENT BOARD
+    '''trả về một bảng mới sau khi di chuyển'''
+    # TẠO BẢNG MỚI NHƯ BẢNG HIỆN TẠI
     new_board = assign_matrix(board) 
-    # FIND NEXT POSITION IF MOVE TO BOX
+    # TÌM VỊ TRÍ TIẾP THEO NẾU DI CHUYỂN ĐẾN HỘP
     if new_board[next_pos[0]][next_pos[1]] == '$':
         x = 2*next_pos[0] - cur_pos[0]
         y = 2*next_pos[1] - cur_pos[1]
         new_board[x][y] = '$'
-    # MOVE PLAYER TO NEW POSITION
+    # DI CHUYỂN NGƯỜI CHƠI ĐẾN VỊ TRÍ MỚI
     new_board[next_pos[0]][next_pos[1]] = '@'
     new_board[cur_pos[0]][cur_pos[1]] = ' '
-    # CHECK IF AT CHECK POINT'S POSITION DON'T HAVE ANYTHING THEN UPDATE % LIKE CHECK POINT
+    # KIỂM TRA NẾU TẠI VỊ TRÍ ĐIỂM KIỂM TRA KHÔNG CÓ GÌ THÌ CẬP NHẬT % NHƯ ĐIỂM KIỂM TRA
     for p in list_check_point:
         if new_board[p[0]][p[1]] == ' ':
             new_board[p[0]][p[1]] = '%'
     return new_board 
 
-''' FIND ALL CHECKPOINTS ON THE BOARD '''
+'''TÌM DANH SÁCH CÁC ĐIỂM KIỂM TRA TRÊN BẢNG'''
 def find_list_check_point(board):
-    '''return list check point form the board
-        if don't have any check point, return empty list
-        it will check num of box, if num of box < num of check point
-            return list [(-1,-1)]'''
+    '''trả về danh sách điểm kiểm tra từ bảng
+        nếu không có bất kỳ điểm kiểm tra nào, trả về danh sách trống
+        nó sẽ kiểm tra số hộp, nếu số hộp < số điểm kiểm tra
+            trả về danh sách [(-1, -1)]'''
     list_check_point = []
     num_of_box = 0
-    ''' CHECK THE ENTIRE BOARD TO FIND CHECK POINT AND NUM OF BOX'''
+    '''KIỂM TRA TOÀN BỘ BẢNG ĐỂ TÌM ĐIỂM KIỂM TRA VÀ SỐ HỘP'''
     for x in range(len(board)):
         for y in range(len(board[0])):
             if board[x][y] == '$':
                 num_of_box += 1
             elif board[x][y] == '%':
-                list_check_point.append((x,y))
-    ''' CHECK IF NUMBER OF BOX < NUM OF CHECK POINT'''
+                list_check_point.append((x, y))
+    '''KIỂM TRA NẾU SỐ HỘP < SỐ LƯỢNG ĐIỂM KIỂM TRA'''
     if num_of_box < len(list_check_point):
-        return [(-1,-1)]
+        return [(-1, -1)]
     return list_check_point
