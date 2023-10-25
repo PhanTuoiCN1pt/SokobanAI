@@ -72,7 +72,7 @@ def compare_matrix(board_A, board_B):
     if len(board_A) != len(board_B) or len(board_A[0]) != len(board_B[0]):
         return False
     for i in range(len(board_A)):
-        for j in range(len(board_A[0]):
+        for j in range(len(board_A[0])):
             if board_A[i][j] != board_B[i][j]:
                 return False
     return True
