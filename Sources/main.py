@@ -9,7 +9,6 @@ import bfs
 import astar
 import astar1
 import time
-import psutil
 ''' Timeout của mỗi map là 30 phút  '''
 TIME_OUT = 1800
 ''' lấy path của folder testcases và checkpoints '''
@@ -167,11 +166,8 @@ def sokoban():
         screen.blit(init_background, (0, 0))
         if sceneState == "init":
             initGame(maps[mapNumber])
-           
-
         if sceneState == "executing":
             list_check_point = check_points[mapNumber]
-
             # Start the time measurement
             start_time = time.time()
             if algorithm == "Euclidean Distance Heuristic":
@@ -182,25 +178,14 @@ def sokoban():
                 list_board = bfs.BFS_search(maps[mapNumber], list_check_point)
             # Stop the time measurement
             end_time = time.time()
-
             if len(list_board) > 0:
                 sceneState = "playing"
                 stateLength = len(list_board[0])
                 currentState = 0
                 elapsed_time = end_time - start_time
-                process = psutil.Process(os.getpid())
-                memory_usage = process.memory_info().rss / (1024**2)
-                if algorithm == "Euclidean Distance Heuristic":
-                    print("ED Heuristic")
-                    
-                elif algorithm == "Manhattan Distance Heuristic":
-                    print("MD Heuristic")
-                    
-                else:
-                    print("BFS")
-                print(f"Map: Level {mapNumber + 1} ")
-                # In ra thời số bước đi, thời gian giải thuật, bộ nhớ sử dụng 
-                print(f" Thời gian: {elapsed_time} seconds, Bộ nhớ: {memory_usage} Mb")
+                print(f"  Map: Level {mapNumber + 1} ")
+                #  thời gian giải thuật
+                print(f"  Thời gian: {elapsed_time} seconds")
                     
             else:
                 sceneState = "end"
@@ -283,7 +268,6 @@ def initGame(map):
 	algorithmRect = algorithmText.get_rect(center=(320, 600))
 	screen.blit(algorithmText, algorithmRect)
 	renderMap(map)
-
 ''' LOADING SCENE '''
 #DISPLAY LOADING SCENE
 def loadingGame():
@@ -316,7 +300,6 @@ def foundGame(map):
 
 def notfoundGame():
 	screen.blit(notfound_background, (0, 0))
-
 	font_1 = pygame.font.Font('gameFont.ttf', 40)
 	text_1 = font_1.render('Không thể tìm ra lời giải', True, WHITE)
 	text_rect_1 = text_1.get_rect(center=(320, 100))
