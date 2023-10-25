@@ -1,6 +1,9 @@
 import support_function as spf
 import time
+import psutil
+import os
 
+TIME_OUT = 1800
 '''
 //========================//
 //           BFS          //
@@ -26,7 +29,6 @@ def BFS_search(board, list_check_point):
         now_state = list_visit.pop(0)
         ''' GET THE PLAYER'S CURRENT POSITION '''
         cur_pos = spf.find_position_player(now_state.board)
-        print("Số TT duyệt : {}".format(len(list_state)))
         ''' GET LIST POSITION THAT PLAYER CAN MOVE TO '''
         list_can_move = spf.get_next_pos(now_state.board, cur_pos)
         ''' MAKE NEW STATES FROM LIST CAN MOVE '''
@@ -42,23 +44,24 @@ def BFS_search(board, list_check_point):
             ''' IF ALL BOXES ARE STUCK --> SKIP THE STATE '''
             if spf.is_all_boxes_stuck(new_board, list_check_point):
                 continue
-
             ''' MAKE NEW STATE '''
             new_state = spf.state(new_board, now_state, list_check_point)
             ''' CHECK WHETHER THE NEW STATE IS GOAL OR NOT '''
             if spf.check_win(new_board, list_check_point):
+                print("\nBreadth First Search ")
                 print("Found win")
+                print("  Số trạng thái duyệt : {} ".format(len(list_state)))
+                print(f"  Bộ nhớ: {memory_usage} Mb")
                 return (new_state.get_line(), len(list_state))
-            
             ''' APPEND NEW STATE TO VISITED LIST AND TRAVERSED LIST '''
             list_state.append(new_state)
             list_visit.append(new_state)
-
+            process = psutil.Process(os.getpid())
+            memory_usage = process.memory_info().rss / (1024**2)
             ''' COMPUTE THE TIMEOUT '''
             end_time = time.time()
             if end_time - start_time > spf.TIME_OUT:
                 return []
-            
         end_time = time.time()
         if end_time - start_time > spf.TIME_OUT:
             return []
