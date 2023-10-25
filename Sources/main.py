@@ -23,7 +23,7 @@ def get_boards():
         if file.endswith(".txt"):
             file_path = f"{path_board}/{file}"
             board = get_board(file_path)
-            # print(file)
+            # in file 
             list_boards.append(board)
     return list_boards
 
@@ -71,81 +71,82 @@ def get_pair(path):
 
 '''
 //========================//
-//      DECLARE AND       //
-//  INITIALIZE MAPS AND   //
-//      CHECK POINTS      //
+//     KHAI BÁO VÀ        //
+//  KHỞI TẠO BẢN ĐỒ VÀ   //
+//      ĐIỂM KIỂM TRA      //
 //========================//
 '''
-maps = get_boards()
-check_points = get_check_points()
-
+maps = get_boards()  # Lấy bản đồ
+check_points = get_check_points()  # Lấy điểm kiểm tra
 
 '''
 //========================//
 //         PYGAME         //
-//     INITIALIZATIONS    //
+//     KHỞI TẠO HÌNH ẢNH  //
 //                        //
 //========================//
 '''
-pygame.init()
-pygame.font.init()
-screen = pygame.display.set_mode((640, 640))
-pygame.display.set_caption('Sokoban')
-clock = pygame.time.Clock()
-BACKGROUND = (0, 0, 0)
-WHITE = (255, 255, 255)
+pygame.init()  # Khởi tạo Pygame
+pygame.font.init()  # Khởi tạo font Pygame
+screen = pygame.display.set_mode((640, 640))  # Khởi tạo màn hình với kích thước 640x640
+pygame.display.set_caption('Sokoban')  # Đặt tiêu đề cửa sổ là 'Sokoban'
+clock = pygame.time.Clock()  # Tạo một đồng hồ
+BACKGROUND = (0, 0, 0)  # Màu nền đen
+WHITE = (255, 255, 255)  # Màu trắng
+
 '''
-GET SOME ASSETS
+LẤY CÁC TÀI SẢN
 '''
-assets_path = os.getcwd() + "\\..\\Assets"
-os.chdir(assets_path)
-player = pygame.image.load(os.getcwd() + '\\player.png')
-wall = pygame.image.load(os.getcwd() + '\\wall.png')
-box = pygame.image.load(os.getcwd() + '\\box.png')
-point = pygame.image.load(os.getcwd() + '\\point.png')
-space = pygame.image.load(os.getcwd() + '\\space.png')
-arrow_left = pygame.image.load(os.getcwd() + '\\arrow_left.png')
-arrow_right = pygame.image.load(os.getcwd() + '\\arrow_right.png')
-init_background = pygame.image.load(os.getcwd() + '\\init_background.png')
-loading_background = pygame.image.load(os.getcwd() + '\\loading_background.png')
-notfound_background = pygame.image.load(os.getcwd() + '\\notfound_background.png')
-found_background = pygame.image.load(os.getcwd() + '\\found_background.png')
+assets_path = os.getcwd() + "\\..\\Assets"  # Đường dẫn đến thư mục chứa tài sản
+os.chdir(assets_path)  # Thay đổi thư mục làm việc hiện tại thành thư mục tài sản
+player = pygame.image.load(os.getcwd() + '\\player.png')  # Tải hình ảnh người chơi
+wall = pygame.image.load(os.getcwd() + '\\wall.png')  # Tải hình ảnh tường
+box = pygame.image.load(os.getcwd() + '\\box.png')  # Tải hình ảnh hộp
+point = pygame.image.load(os.getcwd() + '\\point.png')  # Tải hình ảnh điểm kiểm tra
+space = pygame.image.load(os.getcwd() + '\\space.png')  # Tải hình ảnh không gian
+arrow_left = pygame.image.load(os.getcwd() + '\\arrow_left.png')  # Tải hình ảnh mũi tên trái
+arrow_right = pygame.image.load(os.getcwd() + '\\arrow_right.png')  # Tải hình ảnh mũi tên phải
+init_background = pygame.image.load(os.getcwd() + '\\init_background.png')  # Tải hình ảnh nền khởi tạo
+loading_background = pygame.image.load(os.getcwd() + '\\loading_background.png')  # Tải hình ảnh nền tải
+notfound_background = pygame.image.load(os.getcwd() + '\\notfound_background.png')  # Tải hình ảnh nền không tìm thấy
+found_background = pygame.image.load(os.getcwd() + '\\found_background.png')  # Tải hình ảnh nền tìm thấy
+
 '''
-RENDER THE MAP FOR GAMEPLAY
+HIỂN THỊ BẢN ĐỒ CHO TRÒ CHƠI
 '''
 def renderMap(board):
-	width = len(board[0])
-	height = len(board)
-	indent = (640 - width * 32) / 2.0
-	for i in range(height):
-		for j in range(width):
-			screen.blit(space, (j * 32 + indent, i * 32 + 250))
-			if board[i][j] == '#':
-				screen.blit(wall, (j * 32 + indent, i * 32 + 250))
-			if board[i][j] == '$':
-				screen.blit(box, (j * 32 + indent, i * 32 + 250))
-			if board[i][j] == '%':
-				screen.blit(point, (j * 32 + indent, i * 32 + 250))
-			if board[i][j] == '@':
-				screen.blit(player, (j * 32 + indent, i * 32 + 250))
+    width = len(board[0])
+    height = len(board)
+    indent = (640 - width * 32) / 2.0  # Tính khoảng cách lề
+    for i in range(height):
+        for j in range(width):
+            screen.blit(space, (j * 32 + indent, i * 32 + 250))  # Hiển thị không gian
+            if board[i][j] == '#':
+                screen.blit(wall, (j * 32 + indent, i * 32 + 250))  # Hiển thị tường
+            if board[i][j] == '$':
+                screen.blit(box, (j * 32 + indent, i * 32 + 250))  # Hiển thị hộp
+            if board[i][j] == '%':
+                screen.blit(point, (j * 32 + indent, i * 32 + 250))  # Hiển thị điểm kiểm tra
+            if board[i][j] == '@':
+                screen.blit(player, (j * 32 + indent, i * 32 + 250))  # Hiển thị người chơi
 
 			
 '''
-VARIABLES INITIALIZATIONS
+KHỞI TẠO CÁC BIẾN
 '''
-#Map level
+# Mức độ bản đồ
 mapNumber = 0
-#Algorithm to solve the game
+# Thuật toán giải trò chơi
 algorithm = "Euclidean Distance Heuristic"
-#Your scene states, including: 
-#init for choosing your map and algorithm
-#loading for displaying "loading scene"
-#executing for solving problem
-#playing for displaying the game
+# Trạng thái cảnh, bao gồm:
+# init để chọn bản đồ và thuật toán
+# loading để hiển thị cảnh "đang tải"
+# executing để giải quyết vấn đề
+# playing để hiển thị trò chơi
 sceneState = "init"
 loading = False
 
-''' SOKOBAN FUNCTION '''
+''' HÀM SOKOBAN '''
 start_time = 0
 end_time = 0
 steps = 0
@@ -168,7 +169,7 @@ def sokoban():
             initGame(maps[mapNumber])
         if sceneState == "executing":
             list_check_point = check_points[mapNumber]
-            # Start the time measurement
+            # Bắt đầu đếm thời gian
             start_time = time.time()
             if algorithm == "Euclidean Distance Heuristic":
                 list_board = astar1.AStar_Search1(maps[mapNumber], list_check_point)
@@ -176,7 +177,7 @@ def sokoban():
                 list_board = astar.AStar_Search(maps[mapNumber], list_check_point)
             else:
                 list_board = bfs.BFS_search(maps[mapNumber], list_check_point)
-            # Stop the time measurement
+            # Dừng đếm thời gian
             end_time = time.time()
             if len(list_board) > 0:
                 sceneState = "playing"
@@ -208,7 +209,7 @@ def sokoban():
             if currentState == stateLength:
                 sceneState = "end"
                 found = True
-                steps = stateLength  # Set the number of steps to the state length
+                steps = stateLength  # Đặ số bước là chiều dài trạng thái 
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -237,82 +238,82 @@ def sokoban():
 
     pygame.quit()
 
-''' DISPLAY MAIN SCENE '''
-#DISPLAY INITIAL SCENE
+''' HIỂN THỊ MÀN HÌNH CHÍNH '''
+# HIỂN THỊ MÀN HÌNHHÌNH BAN ĐẦU
 def initGame(map):
-	titleSize = pygame.font.Font('gameFont.ttf', 60)
-	titleText = titleSize.render('Sokoban(Nhóm 10)', True, WHITE)
-	titleRect = titleText.get_rect(center=(320, 80))
-	screen.blit(titleText, titleRect)
+    titleSize = pygame.font.Font('gameFont.ttf', 60)
+    titleText = titleSize.render('Sokoban(Nhóm 10)', True, WHITE)
+    titleRect = titleText.get_rect(center=(320, 80))
+    screen.blit(titleText, titleRect)
 
-	desSize = pygame.font.Font('gameFont.ttf', 20)
-	desText = desSize.render('Chọn map:', True, WHITE)
-	desRect = desText.get_rect(center=(320, 140))
-	screen.blit(desText, desRect)
-	
-	desSize = pygame.font.Font('gameFont.ttf', 20)
-	desText = desSize.render('Nhấn SPACE để đổi thuật toán', True, WHITE)
-	desRect = desText.get_rect(center=(320, 550))
-	screen.blit(desText, desRect)
+    desSize = pygame.font.Font('gameFont.ttf', 20)
+    desText = desSize.render('Chọn bản đồ:', True, WHITE)
+    desRect = desText.get_rect(center=(320, 140))
+    screen.blit(desText, desRect)
 
-	mapSize = pygame.font.Font('gameFont.ttf', 30)
-	mapText = mapSize.render(" Map: " + str(mapNumber + 1) + " ", True, WHITE)
-	mapRect = mapText.get_rect(center=(320, 200))
-	screen.blit(mapText, mapRect)
+    desSize = pygame.font.Font('gameFont.ttf', 20)
+    desText = desSize.render('Nhấn SPACE để đổi thuật toán', True, WHITE)
+    desRect = desText.get_rect(center=(320, 550))
+    screen.blit(desText, desRect)
 
-	screen.blit(arrow_left, (240, 188))
-	screen.blit(arrow_right, (376, 188))
+    mapSize = pygame.font.Font('gameFont.ttf', 30)
+    mapText = mapSize.render(" Bản đồ: " + str(mapNumber + 1) + " ", True, WHITE)
+    mapRect = mapText.get_rect(center=(320, 200))
+    screen.blit(mapText, mapRect)
 
-	algorithmSize = pygame.font.Font('gameFont.ttf', 30)
-	algorithmText = algorithmSize.render(str(algorithm), True, WHITE)
-	algorithmRect = algorithmText.get_rect(center=(320, 600))
-	screen.blit(algorithmText, algorithmRect)
-	renderMap(map)
-''' LOADING SCENE '''
-#DISPLAY LOADING SCENE
+    screen.blit(arrow_left, (240, 188))
+    screen.blit(arrow_right, (376, 188))
+
+    algorithmSize = pygame.font.Font('gameFont.ttf', 30)
+    algorithmText = algorithmSize.render(str(algorithm), True, WHITE)
+    algorithmRect = algorithmText.get_rect(center=(320, 600))
+    screen.blit(algorithmText, algorithmRect)
+    renderMap(map)
+
+''' CẢNH TẢI '''
+# HIỂN THỊ CẢNH TẢI
 def loadingGame():
-	screen.blit(loading_background, (0, 0))
+    screen.blit(loading_background, (0, 0))
 
-	fontLoading_1 = pygame.font.Font('gameFont.ttf', 40)
-	text_1 = fontLoading_1.render('LOADING', True, WHITE)
-	text_rect_1 = text_1.get_rect(center=(320, 60))
-	screen.blit(text_1, text_rect_1)
+    fontLoading_1 = pygame.font.Font('gameFont.ttf', 40)
+    text_1 = fontLoading_1.render('ĐANG TẢI', True, WHITE)
+    text_rect_1 = text_1.get_rect(center=(320, 60))
+    screen.blit(text_1, text_rect_1)
 
-	fontLoading_2 = pygame.font.Font('gameFont.ttf', 20)
-	text_2 = fontLoading_2.render('Đang tìm lời giải............', True, WHITE)
-	text_rect_2 = text_2.get_rect(center=(320, 100))
-	screen.blit(text_2, text_rect_2)
+    fontLoading_2 = pygame.font.Font('gameFont.ttf', 20)
+    text_2 = fontLoading_2.render('Đang tìm lời giải............', True, WHITE)
+    text_rect_2 = text_2.get_rect(center=(320, 100))
+    screen.blit(text_2, text_rect_2)
 
 def foundGame(map):
-	screen.blit(found_background, (0, 0))
+    screen.blit(found_background, (0, 0))
 
-	font_1 = pygame.font.Font('gameFont.ttf', 30)
-	text_1 = font_1.render('Yeah! Đã tìm thấy lời giải!!!', True, WHITE)
-	text_rect_1 = text_1.get_rect(center=(320, 100))
-	screen.blit(text_1, text_rect_1)
+    font_1 = pygame.font.Font('gameFont.ttf', 30)
+    text_1 = font_1.render('Yeah! Đã tìm thấy lời giải!!!', True, WHITE)
+    text_rect_1 = text_1.get_rect(center=(320, 100))
+    screen.blit(text_1, text_rect_1)
 
-	font_2 = pygame.font.Font('gameFont.ttf', 20)
-	text_2 = font_2.render('Nhấn ENTER để tiếp tục', True, WHITE)
-	text_rect_2 = text_2.get_rect(center=(320, 600))
-	screen.blit(text_2, text_rect_2)
+    font_2 = pygame.font.Font('gameFont.ttf', 20)
+    text_2 = font_2.render('Nhấn ENTER để tiếp tục', True, WHITE)
+    text_rect_2 = text_2.get_rect(center=(320, 600))
+    screen.blit(text_2, text_rect_2)
 
-	renderMap(map)
+    renderMap(map)
 
 def notfoundGame():
-	screen.blit(notfound_background, (0, 0))
-	font_1 = pygame.font.Font('gameFont.ttf', 40)
-	text_1 = font_1.render('Không thể tìm ra lời giải', True, WHITE)
-	text_rect_1 = text_1.get_rect(center=(320, 100))
-	screen.blit(text_1, text_rect_1)
+    screen.blit(notfound_background, (0, 0))
+    font_1 = pygame.font.Font('gameFont.ttf', 40)
+    text_1 = font_1.render('Không thể tìm ra lời giải', True, WHITE)
+    text_rect_1 = text_1.get_rect(center=(320, 100))
+    screen.blit(text_1, text_rect_1)
 
-	font_2 = pygame.font.Font('gameFont.ttf', 20)
-	text_2 = font_2.render('Nhấn ENTER để tiếp tục', True, WHITE)
-	text_rect_2 = text_2.get_rect(center=(320, 600))
-	screen.blit(text_2, text_rect_2)
+    font_2 = pygame.font.Font('gameFont.ttf', 20)
+    text_2 = font_2.render('Nhấn ENTER để tiếp tục', True, WHITE)
+    text_rect_2 = text_2.get_rect(center=(320, 600))
+    screen.blit(text_2, text_rect_2)
 
 def main():
-	sokoban()
+    sokoban()
 
 if __name__ == "__main__":
-	main()
-
+    main()
