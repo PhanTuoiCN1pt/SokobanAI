@@ -65,7 +65,7 @@ def BFS_search(board, list_check_point):
             
             ''' KIỂM TRA XEM TRẠNG THÁI MỚI CÓ PHẢI LÀ TRẠNG THÁI KẾT THÚC KHÔNG '''
             if spf.check_win(new_board, list_check_point):
-                print("\nBreadth First Search)")
+                print("\nBreadth First Search")
                 print("Found Win")
                 print("  Số trạng thái đã duyệt : {} ".format(len(list_state)))
                 process = psutil.Process(os.getpid())
