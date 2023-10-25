@@ -257,7 +257,7 @@ def initGame(map):
     screen.blit(desText, desRect)
 
     mapSize = pygame.font.Font('gameFont.ttf', 30)
-    mapText = mapSize.render(" Bản đồ: " + str(mapNumber + 1) + " ", True, WHITE)
+    mapText = mapSize.render(" Map: " + str(mapNumber + 1) + " ", True, WHITE)
     mapRect = mapText.get_rect(center=(320, 200))
     screen.blit(mapText, mapRect)
 
