@@ -64,7 +64,7 @@ def AStar_Search1(board, list_check_point):
             
             '''KIỂM TRA XEM TRẠNG THÁI MỚI CÓ PHẢI LÀ TRẠNG THÁI KẾT THÚC KHÔNG'''
             if spf.check_win(new_board, list_check_point):
-                print("\nHeuristic theo khoảng cách Euclidean")
+                print("\nEuclidean Distance Heuristic")
                 print("Found Win")
                 print("  Số trạng thái đã duyệt : {} ".format(len(list_state)))
                 process = psutil.Process(os.getpid())
