@@ -1,7 +1,11 @@
 from copy import deepcopy
 import math
 TIME_OUT = 1800
-
+'''
+//========================//
+//      CÁC HÀM HỖ TRỢ     //
+//========================//
+'''
 class state:
     def __init__(self, board, state_parent, list_check_point):
         self.board = board
