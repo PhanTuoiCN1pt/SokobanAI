@@ -247,7 +247,7 @@ def initGame(map):
     screen.blit(titleText, titleRect)
 
     desSize = pygame.font.Font('gameFont.ttf', 20)
-    desText = desSize.render('Chọn bản đồ:', True, WHITE)
+    desText = desSize.render('Chọn Map:', True, WHITE)
     desRect = desText.get_rect(center=(320, 140))
     screen.blit(desText, desRect)
 
