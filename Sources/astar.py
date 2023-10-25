@@ -1,4 +1,4 @@
-import support_function as spf 
+import support_function as spf
 import time
 from queue import PriorityQueue
 import psutil
@@ -6,71 +6,87 @@ import os
 
 '''
 //========================//
-//          ASTAR         //
-//        ALGORITHM       //
-//     IMPLEMENTATION     //
+//     GIẢI THUẬT A*      //
+//    IMPLEMENTATION     //
 //========================//
 '''
+
 def AStar_Search(board, list_check_point):
     start_time = time.time()
-    ''' A* SEARCH SOLUTION '''
-    ''' IF START BOARD IS GOAL OR DON'T HAVE CHECK POINT '''
-    if spf.check_win(board,list_check_point):
-        print("Found win")
+    
+    ''' GIẢI PHÁP TÌM KIẾM A* '''
+    
+    ''' NẾU BẢNG BẮT ĐẦU LÀ BẢNG KẾT THÚC HOẶC KHÔNG CÓ ĐIỂM KIỂM TRA '''
+    if spf.check_win(board, list_check_point):
+        print("Found Win")
         return [board]
-    ''' INITIALIZE START STATE '''
+    
+    ''' KHỞI TẠO TRẠNG THÁI BẮT ĐẦU '''
     start_state = spf.state(board, None, list_check_point)
     list_state = [start_state]
-    ''' INITIALIZE PRIORITY QUEUE '''
+    
+    ''' KHỞI TẠO HÀNG ĐỢI ƯU TIÊN '''
     heuristic_queue = PriorityQueue()
     heuristic_queue.put(start_state)
-    ''' LOOP THROUGH PRIORITY QUEUE '''
+    
+    ''' LẶP QUA HÀNG ĐỢI ƯU TIÊN '''
     while not heuristic_queue.empty():
-        '''GET NOW STATE TO SEARCH'''
+        
+        '''LẤY TRẠNG THÁI HIỆN TẠI ĐỂ TÌM KIẾM'''
         now_state = heuristic_queue.get()
-        ''' GET THE PLAYER'S CURRENT POSITION'''
+        
+        '''LẤY VỊ TRÍ HIỆN TẠI CỦA NGƯỜI CHƠI'''
         cur_pos = spf.find_position_player(now_state.board)
-        ''' GET LIST POSITION THAT PLAYER CAN MOVE TO '''
+        
+        '''LẤY DANH SÁCH VỊ TRÍ MÀ NGƯỜI CHƠI CÓ THỂ DI CHUYỂN ĐẾN'''
         list_can_move = spf.get_next_pos(now_state.board, cur_pos)
-        ''' MAKE NEW STATES FROM LIST CAN MOVE '''
+        
+        '''TẠO TRẠNG THÁI MỚI TỪ DANH SÁCH CÓ THỂ DI CHUYỂN'''
         for next_pos in list_can_move:
-            ''' MAKE NEW BOARD '''
+            
+            '''TẠO BẢNG MỚI'''
             new_board = spf.move(now_state.board, next_pos, cur_pos, list_check_point)
-            ''' IF THIS BOARD DON'T HAVE IN LIST BEFORE --> SKIP THE STATE '''
+            
+            '''NẾU BẢNG NÀY CHƯA TỒN TẠI TRONG DANH SÁCH TRẠNG THÁI THÌ BỎ QUA TRẠNG THÁI NÀY'''
             if spf.is_board_exist(new_board, list_state):
                 continue
-            ''' IF ONE OR MORE BOXES ARE STUCK IN THE CORNER --> SKIP THE STATE '''
+            
+            '''NẾU MỘT HOẶC NHIỀU HỘP BỊ KẸT TRONG GÓC THÌ BỎ QUA TRẠNG THÁI NÀY'''
             if spf.is_board_can_not_win(new_board, list_check_point):
                 continue
-            ''' IF ALL BOXES ARE STUCK --> SKIP THE STATE '''
+            
+            '''NẾU TẤT CẢ HỘP BỊ KẸT THÌ BỎ QUA TRẠNG THÁI NÀY'''
             if spf.is_all_boxes_stuck(new_board, list_check_point):
                 continue
-            ''' MAKE NEW STATE '''
+            
+            '''TẠO TRẠNG THÁI MỚI'''
             new_state = spf.state(new_board, now_state, list_check_point)
-            ''' CHECK WHETHER THE NEW STATE IS GOAL OR NOT '''
+            
+            '''KIỂM TRA XEM TRẠNG THÁI MỚI CÓ PHẢI LÀ TRẠNG THÁI KẾT THÚC KHÔNG'''
             if spf.check_win(new_board, list_check_point):
-                print("\nManhattan Distance Heuristic")
-                print("Found win")
-                print("  Số trạng thái duyệt : {} ".format(len(list_state)))
+                print("\nHeuristic theo khoảng cách Manhattan")
+                print("Found Win")
+                print("  Số trạng thái đã duyệt : {} ".format(len(list_state)))
+                process = psutil.Process(os.getpid())
+                memory_usage = process.memory_info().rss / (1024**2)
                 print(f"  Bộ nhớ: {memory_usage} Mb")
                 return (new_state.get_line(), len(list_state))
             
-            ''' APPEND NEW STATE TO PRIORITY QUEUE AND TRAVERSED LIST '''
+            '''THÊM TRẠNG THÁI MỚI VÀO HÀNG ĐỢI ƯU TIÊN VÀ DANH SÁCH ĐÃ ĐƯỢC DUYỆT'''
             list_state.append(new_state)
             heuristic_queue.put(new_state)
             process = psutil.Process(os.getpid())
             memory_usage = process.memory_info().rss / (1024**2)
-            ''' COMPUTE THE TIMEOUT '''
+            
+            '''TÍNH THỜI GIAN TIMEOUT'''
             end_time = time.time()
             if end_time - start_time > spf.TIME_OUT:
                 return []
-            
-            
+        
         end_time = time.time()
         if end_time - start_time > spf.TIME_OUT:
             return []
     
-    ''' SOLUTION NOT FOUND '''
+    ''' KHÔNG TÌM THẤY GIẢI PHÁP '''
     print("Not Found")
     return []
-
